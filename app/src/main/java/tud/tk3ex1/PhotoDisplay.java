@@ -67,6 +67,7 @@ public class PhotoDisplay {
     }
 
     public void move(byte[] data) {
+        if(mView == null) return;
         final float deltaX = ByteBuffer.wrap(data, 0, 4).getFloat();
         final float deltaY = ByteBuffer.wrap(data, 4, 4).getFloat();
         Log.d("AAA", deltaX + " - " + deltaY);
@@ -84,6 +85,7 @@ public class PhotoDisplay {
     }
 
     public void scale(byte[] data) {
+        if(mView == null) return;
         final float scale = ByteBuffer.wrap(data).getFloat();
         Log.d("AAA", "" + scale);
 
