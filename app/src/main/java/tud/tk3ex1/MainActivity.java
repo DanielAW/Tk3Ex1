@@ -26,20 +26,6 @@ public class MainActivity extends Activity {
 
 
     public class TestReceiver extends Receiver {
-        public void receive(final Message msg) {
-
-            for (String key : msg.getMeta().keySet()) {
-                Log.i("umundo", key + ": " + msg.getMeta(key));
-            }
-
-            MainActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d("DEBUG", "got msg: " + msg.getMeta().get("txt"));
-                    tv.setText(tv.getText() + msg.getMeta().get("txt"));
-                }
-            });
-        }
     }
 
     @Override
@@ -61,7 +47,11 @@ public class MainActivity extends Activity {
         node.addPublisher(m_publisher);
 
         m_subscriber = new Subscriber("duftt");
-        m_subscriber.setReceiver(new TestReceiver());
+
+        FotoReceiver fr = new FotoReceiver();
+        //Thread fr_thread = new Thread(fr);
+
+        m_subscriber.setReceiver(fr);
         node.addSubscriber(m_subscriber);
 
 
