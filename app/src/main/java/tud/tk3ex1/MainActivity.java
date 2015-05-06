@@ -25,6 +25,7 @@ import org.umundo.core.Subscriber;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
@@ -166,6 +167,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void showCurrentPicture() {
+        if(mSelectedPictures.size() == 0) {
+            Toast.makeText(this, "No picture to show. Please select one first.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         try {
             Uri uri = mSelectedPictures.get(mCurrentPictureIndex);
             Bitmap b = getBitmapFromUri(uri);

@@ -21,9 +21,10 @@ public class PhotoToNet extends AsyncTask<Bitmap, Void, byte[]> {
 
     @Override
     protected byte[] doInBackground(Bitmap... params) {
-
+        Bitmap b = params[0];
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        params[0].compress(Bitmap.CompressFormat.JPEG, 8, stream);
+        
+        b.compress(Bitmap.CompressFormat.JPEG, 8, stream);
 
         return stream.toByteArray();
     }
