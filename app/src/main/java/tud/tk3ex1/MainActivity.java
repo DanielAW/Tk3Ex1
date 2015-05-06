@@ -1,15 +1,27 @@
 package tud.tk3ex1;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.os.ParcelFileDescriptor;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
+import org.umundo.core.Discovery;
+import org.umundo.core.Discovery.DiscoveryType;
+import org.umundo.core.Message;
+import org.umundo.core.Node;
+import org.umundo.core.Publisher;
+import org.umundo.core.Receiver;
+import org.umundo.core.Subscriber;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -28,6 +40,16 @@ public class MainActivity extends ActionBarActivity {
     private FrameLayout mLowerButtons;
     private boolean mLowerButtonsVisible;
     private int mCurrentPictureIndex;
+
+    private Discovery disc;
+    private Node node;
+    private Subscriber m_subscriber;
+    private Publisher m_publisher;
+    private TextView tv;
+
+
+    public class TestReceiver extends Receiver {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +83,33 @@ public class MainActivity extends ActionBarActivity {
                 showCurrentPicture();
             }
         });
+        //System.loadLibrary("umundoNativeJava");
+        System.loadLibrary("umundoNativeJava_d");
+
+        disc = new Discovery(DiscoveryType.MDNS);
+
+        node = new Node();
+        disc.add(node);
+
+        m_publisher = new Publisher("duftt");
+        node.addPublisher(m_publisher);
+
+        m_subscriber = new Subscriber("duftt");
+
+        FotoReceiver fr = new FotoReceiver();
+        //Thread fr_thread = new Thread(fr);
+
+        m_subscriber.setReceiver(fr);
+        node.addSubscriber(m_subscriber);
+
+
+    }
+
+    public void onSendBtn(View v) {
+        Message m = new Message();
+        m.putMeta("txt", "test123");
+        Log.d("DEBUG", "try to send data");
+        m_publisher.send(m);
     }
 
     @Override
