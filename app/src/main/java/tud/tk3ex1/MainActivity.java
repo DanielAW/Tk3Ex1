@@ -50,10 +50,6 @@ public class MainActivity extends ActionBarActivity {
         return m_publisher;
     }
 
-
-    public class TestReceiver extends Receiver {
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +89,6 @@ public class MainActivity extends ActionBarActivity {
         m_subscriber = new Subscriber("duftt");
 
         FotoReceiver fr = new FotoReceiver(mPhotoDisplay);
-        //Thread fr_thread = new Thread(fr);
 
         m_subscriber.setReceiver(fr);
         node.addSubscriber(m_subscriber);
