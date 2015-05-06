@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,18 +90,19 @@ public class MainActivity extends ActionBarActivity {
         disc = new Discovery(DiscoveryType.MDNS);
 
         node = new Node();
-        disc.add(node);
 
         m_publisher = new Publisher("duftt");
         node.addPublisher(m_publisher);
 
         m_subscriber = new Subscriber("duftt");
 
-        FotoReceiver fr = new FotoReceiver();
+        FotoReceiver fr = new FotoReceiver(mImageView);
         //Thread fr_thread = new Thread(fr);
 
         m_subscriber.setReceiver(fr);
         node.addSubscriber(m_subscriber);
+
+        disc.add(node);
 
 
     }
@@ -170,6 +172,11 @@ public class MainActivity extends ActionBarActivity {
 
             mImageView.setImageBitmap(b);
             mImageView.setMaxZoom(4f);
+
+
+            PhotoToNet sender = new PhotoToNet(m_publisher);
+            sender.execute(b);
+
 
         } catch (IOException e) {
             e.printStackTrace();
