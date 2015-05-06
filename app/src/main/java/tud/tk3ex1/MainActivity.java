@@ -99,7 +99,7 @@ public class MainActivity extends ActionBarActivity {
         node.addSubscriber(m_subscriber);
 
         disc.add(node);
-
+        m_publisher.setGreeter(new PeerGreeter(mPhotoDisplay));
 
     }
 
@@ -171,7 +171,7 @@ public class MainActivity extends ActionBarActivity {
             Uri uri = mSelectedPictures.get(mCurrentPictureIndex);
             Bitmap b = resizeBitmap(getBitmapFromUri(uri), 1280, 1280);
 
-            mPhotoDisplay.show(b);
+            mPhotoDisplay.show(b, true);
 
             PhotoToNet sender = new PhotoToNet(m_publisher);
             sender.execute(b);

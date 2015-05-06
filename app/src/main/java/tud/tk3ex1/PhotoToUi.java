@@ -3,7 +3,6 @@ package tud.tk3ex1;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.widget.ImageView;
 
 
 public class PhotoToUi extends AsyncTask<byte[], Void, Bitmap> {
@@ -21,6 +20,6 @@ public class PhotoToUi extends AsyncTask<byte[], Void, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap result) {
-        mDst.show(result);
+        mDst.show(result, false);
     }
 }

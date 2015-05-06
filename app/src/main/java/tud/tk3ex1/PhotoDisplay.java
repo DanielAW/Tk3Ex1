@@ -20,13 +20,17 @@ public class PhotoDisplay {
     private FrameLayout mParent;
     private MainActivity mMain;
     private TouchImageView mView;
+    private boolean mLastPhotoFromLocalSource;
+    private Bitmap mLastPhoto;
 
     public PhotoDisplay(MainActivity main, FrameLayout parent) {
         mMain = main;
         mParent = parent;
     }
 
-    public void show(Bitmap b) {
+    public void show(Bitmap b, boolean localSource) {
+        mLastPhotoFromLocalSource = localSource;
+        mLastPhoto = b;
         mView = new TouchImageView(mMain);
         mView.setImageBitmap(b);
         mView.setMaxZoom(4f);
@@ -101,5 +105,13 @@ public class PhotoDisplay {
             }
         }.execute();
 
+    }
+
+    public boolean isLastPhotoFromLocalSource() {
+        return mLastPhotoFromLocalSource;
+    }
+
+    public Bitmap getLastPhoto() {
+        return mLastPhoto;
     }
 }
