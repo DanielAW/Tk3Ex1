@@ -4,7 +4,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import org.umundo.core.Discovery;
+import org.umundo.core.Discovery.DiscoveryType;
+import org.umundo.core.Message;
+import org.umundo.core.Node;
+import org.umundo.core.Publisher;
+import org.umundo.core.Receiver;
+import org.umundo.core.Subscriber;
 
 public class MainActivity extends Activity {
 
@@ -12,6 +18,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        System.loadLibrary("umundoNativeJava");
+
     }
 
     @Override
@@ -35,4 +44,13 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
+
+
+
+
+
 }
