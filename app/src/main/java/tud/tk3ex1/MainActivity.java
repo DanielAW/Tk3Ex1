@@ -2,8 +2,12 @@ package tud.tk3ex1;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
 import org.umundo.core.Discovery;
 import org.umundo.core.Discovery.DiscoveryType;
 import org.umundo.core.Message;
@@ -14,13 +18,60 @@ import org.umundo.core.Subscriber;
 
 public class MainActivity extends Activity {
 
+    private Discovery disc;
+    private Node node;
+    private Subscriber m_subscriber;
+    private Publisher m_publisher;
+    private TextView tv;
+
+
+    public class TestReceiver extends Receiver {
+        public void receive(final Message msg) {
+
+            for (String key : msg.getMeta().keySet()) {
+                Log.i("umundo", key + ": " + msg.getMeta(key));
+            }
+
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("DEBUG", "got msg: " + msg.getMeta().get("txt"));
+                    tv.setText(tv.getText() + msg.getMeta().get("txt"));
+                }
+            });
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        System.loadLibrary("umundoNativeJava");
+        tv = new TextView(this);
 
+        //System.loadLibrary("umundoNativeJava");
+        System.loadLibrary("umundoNativeJava_d");
+
+        disc = new Discovery(DiscoveryType.MDNS);
+
+        node = new Node();
+        disc.add(node);
+
+        m_publisher = new Publisher("duftt");
+        node.addPublisher(m_publisher);
+
+        m_subscriber = new Subscriber("duftt");
+        m_subscriber.setReceiver(new TestReceiver());
+        node.addSubscriber(m_subscriber);
+
+
+    }
+
+    public void onSendBtn(View v) {
+        Message m = new Message();
+        m.putMeta("txt", "test123");
+        Log.d("DEBUG", "try to send data");
+        m_publisher.send(m);
     }
 
     @Override
