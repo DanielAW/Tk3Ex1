@@ -17,6 +17,14 @@ import android.widget.ImageView;
 
 
 public class TouchImageView extends ImageView {
+
+    public interface OnViewChange {
+        void OnMove(float deltaX, float deltaY);
+        void OnScale(float scaleFactor);
+    }
+
+    private OnViewChange mOnViewChangeListener;
+
     Matrix matrix;
     // We can be in one of these 3 states
     static final int NONE = 0;
@@ -84,6 +92,8 @@ public class TouchImageView extends ImageView {
                             matrix.postTranslate(fixTransX, fixTransY);
                             fixTrans();
                             last.set(curr.x, curr.y);
+                            if (mOnViewChangeListener != null)
+                                mOnViewChangeListener.OnMove(deltaX, deltaY);
                         }
                         break;
                     case MotionEvent.ACTION_UP:
@@ -103,6 +113,20 @@ public class TouchImageView extends ImageView {
             }
 
         });
+    }
+
+    public void setOnViewChangeListener(OnViewChange v) {
+        mOnViewChangeListener = v;
+    }
+
+    public void move(float deltaX, float deltaY) {
+        float fixTransX = getFixDragTrans(deltaX, viewWidth, origWidth * saveScale);
+        float fixTransY = getFixDragTrans(deltaY, viewHeight, origHeight * saveScale);
+        matrix.postTranslate(fixTransX, fixTransY);
+        fixTrans();
+
+        setImageMatrix(matrix);
+        invalidate();
     }
 
     public void setMaxZoom(float x) {
@@ -130,6 +154,7 @@ public class TouchImageView extends ImageView {
                 saveScale = minScale;
                 mScaleFactor = minScale / origScale;
             }
+            mOnViewChangeListener.OnScale(mScaleFactor);
 
             if (origWidth * saveScale <= viewWidth || origHeight * saveScale <= viewHeight)
                 matrix.postScale(mScaleFactor, mScaleFactor, viewWidth / 2, viewHeight / 2);
@@ -142,6 +167,14 @@ public class TouchImageView extends ImageView {
 
         }
 
+    }
+
+    public void setScale(float scale) {
+        saveScale *= scale;
+        matrix.postScale(scale, scale, viewWidth / 2, viewHeight / 2);
+        fixTrans();
+        setImageMatrix(matrix);
+        invalidate();
     }
 
     void fixTrans() {
@@ -205,7 +238,8 @@ public class TouchImageView extends ImageView {
         oldMeasuredHeight = viewHeight;
         oldMeasuredWidth = viewWidth;
 
-        if (saveScale == 1) {
+        //if (saveScale == 1) {
+
             //Fit to screen.
             float scale;
             Drawable drawable = getDrawable();
@@ -233,7 +267,7 @@ public class TouchImageView extends ImageView {
             origHeight = viewHeight - 2 * redundantYSpace;
             setImageMatrix(matrix);
 
-        }
+        //}
 
         fixTrans();
     }

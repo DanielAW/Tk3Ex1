@@ -8,19 +8,26 @@ import org.umundo.core.Message;
 
 
 public class FotoReceiver extends Receiver{
-    private ImageView mImg;
+    private PhotoDisplay mDisp;
 
-    public FotoReceiver(ImageView dst) {
-        mImg = dst;
+    public FotoReceiver(PhotoDisplay disp) {
+        mDisp = disp;
     }
 
     public void receive(Message msg) {
 
-        Log.d("DEBUG", "got msg: " + msg.getMeta().get("txt"));
-
-        if(msg.getMeta().get("type").equals("image")) {
-            PhotoToUi ptu = new PhotoToUi(mImg);
+        Log.d("DEBUG", "got msg: " + msg.getMeta().get("type"));
+        String type = msg.getMeta().get("type");
+        if(type.equals("image")) {
+            PhotoToUi ptu = new PhotoToUi(mDisp);
             ptu.execute(msg.getData());
+        }
+
+        else if(type.equals("move")) {
+            mDisp.move(msg.getData());
+        }
+        else if(type.equals("scale")) {
+            mDisp.scale(msg.getData());
         }
     }
 }

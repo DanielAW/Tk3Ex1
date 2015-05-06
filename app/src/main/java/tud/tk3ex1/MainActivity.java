@@ -1,6 +1,5 @@
 package tud.tk3ex1;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,12 +21,10 @@ import org.umundo.core.Node;
 import org.umundo.core.Publisher;
 import org.umundo.core.Receiver;
 import org.umundo.core.Subscriber;
-import android.view.View;
-import android.widget.Button;
+
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +35,7 @@ public class MainActivity extends ActionBarActivity {
 
     private static final int SELECT_PICTURE = 1;
     private ArrayList<Uri> mSelectedPictures = new ArrayList<Uri>();
-    private TouchImageView mImageView;
+    private PhotoDisplay mPhotoDisplay;
     private FrameLayout mLowerButtons;
     private boolean mLowerButtonsVisible;
     private int mCurrentPictureIndex;
@@ -49,6 +46,10 @@ public class MainActivity extends ActionBarActivity {
     private Publisher m_publisher;
     private TextView tv;
 
+    public Publisher getPublisher() {
+        return m_publisher;
+    }
+
 
     public class TestReceiver extends Receiver {
     }
@@ -58,14 +59,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mImageView = (TouchImageView)findViewById(R.id.imageView);
+        mPhotoDisplay = new PhotoDisplay(this, (FrameLayout)findViewById(R.id.imageArea));
         mLowerButtons = (FrameLayout)findViewById(R.id.lowerButtons);
-        mImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleLowerButtons();
-            }
-        });
         hideLowerButtons();
 
         findViewById(R.id.button_next).setOnClickListener(new View.OnClickListener() {
@@ -97,7 +92,7 @@ public class MainActivity extends ActionBarActivity {
 
         m_subscriber = new Subscriber("duftt");
 
-        FotoReceiver fr = new FotoReceiver(mImageView);
+        FotoReceiver fr = new FotoReceiver(mPhotoDisplay);
         //Thread fr_thread = new Thread(fr);
 
         m_subscriber.setReceiver(fr);
@@ -174,11 +169,9 @@ public class MainActivity extends ActionBarActivity {
 
         try {
             Uri uri = mSelectedPictures.get(mCurrentPictureIndex);
-            Bitmap b = getBitmapFromUri(uri);
+            Bitmap b = resizeBitmap(getBitmapFromUri(uri), 1280, 1280);
 
-            mImageView.setImageBitmap(b);
-            mImageView.setMaxZoom(4f);
-
+            mPhotoDisplay.show(b);
 
             PhotoToNet sender = new PhotoToNet(m_publisher);
             sender.execute(b);
@@ -198,6 +191,29 @@ public class MainActivity extends ActionBarActivity {
         return image;
     }
 
+    // source: http://stackoverflow.com/questions/15440647/scaled-bitmap-maintaining-aspect-ratio
+    private static Bitmap resizeBitmap(Bitmap image, int maxWidth, int maxHeight) {
+        if (maxHeight > 0 && maxWidth > 0) {
+            int width = image.getWidth();
+            int height = image.getHeight();
+            float ratioBitmap = (float) width / (float) height;
+            float ratioMax = (float) maxWidth / (float) maxHeight;
+
+            int finalWidth = maxWidth;
+            int finalHeight = maxHeight;
+            if (ratioMax > 1) {
+                finalWidth = (int) ((float) maxHeight * ratioBitmap);
+            } else {
+                finalHeight = (int) ((float) maxWidth / ratioBitmap);
+            }
+            image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
+            return image;
+        } else {
+            return image;
+
+        }
+    }
+
 
     private void showLowerButtons() {
         mLowerButtons.setAlpha((float)0.7);
@@ -209,7 +225,7 @@ public class MainActivity extends ActionBarActivity {
         mLowerButtonsVisible = false;
     }
 
-    private void toggleLowerButtons() {
+    public void toggleLowerButtons() {
         if(mLowerButtonsVisible) hideLowerButtons();
         else showLowerButtons();
     }

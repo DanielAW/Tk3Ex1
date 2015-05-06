@@ -7,9 +7,9 @@ import android.widget.ImageView;
 
 
 public class PhotoToUi extends AsyncTask<byte[], Void, Bitmap> {
-    private ImageView mDst;
+    private PhotoDisplay mDst;
 
-    public PhotoToUi(ImageView dst) {
+    public PhotoToUi(PhotoDisplay dst) {
         mDst = dst;
     }
 
@@ -21,6 +21,6 @@ public class PhotoToUi extends AsyncTask<byte[], Void, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap result) {
-        mDst.setImageBitmap(result);
+        mDst.show(result);
     }
 }

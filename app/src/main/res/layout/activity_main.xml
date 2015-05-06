@@ -2,11 +2,18 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#ff000000">
+    <!--
     <vendor.TouchImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="center"
         android:id="@+id/imageView"
+        android:background="#ff000000"/>
+        -->
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/imageArea"
         android:background="#ff000000"/>
 
     <FrameLayout
